@@ -24,7 +24,7 @@ $contacts = $outlook.session.GetDefaultFolder($olFolders::olFolderContacts).item
         $contact | select Subject, Birthday
 
         # edit birthday to force re-creation of birthday calendar entry
-        if ($forceEditBirthday) {
+        if ($forceEditBirthday -and $contact.Birthday) {
             # add a day to their birthday
             $contact.Birthday = ($contact.Birthday).AddHours(24)
             $contact.save()
