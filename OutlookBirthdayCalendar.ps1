@@ -6,8 +6,8 @@ $olFolders = "Microsoft.Office.Interop.Outlook.OlDefaultFolders" -as [type]
 $outlook = New-Object -ComObject Outlook.Application
 $namespace = $outlook.GetNamespace("MAPI")
 
+# send and receive if outlook is in cached exchange mode
 function Send-AndReceive {
-    # do a send and receive before we start
     if ($outlook.session.Stores | ? { $_.IsCachedExchange }) {
         Start-Job { $namespace.SendAndReceive($false) } | Wait-Job -Timeout 15 | out-null
     }
