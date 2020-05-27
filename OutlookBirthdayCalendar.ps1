@@ -1,5 +1,6 @@
 ﻿# how long to wait betweeen clearing and setting birthday
 $waitTime = 60
+$deleteRecurringCalendarEntry = $true
 
 # default no birthday date of 4501
 $noBirthdayDate = Get-Date('1/01/4501 12:00:00 AM')
@@ -60,20 +61,23 @@ $contactsOriginal = ($contacts | select subject, birthday)
 
 Send-AndReceive
 
-# get recurring calendar entries
-$cal = $outlook.session.GetDefaultFolder($olFolders::olFolderCalendar).items | ? { $_.IsRecurring }
+# if calendar entries should be deleted
+if ($deleteRecurringCalendarEntry) {
+    # get recurring calendar entries
+    $cal = $outlook.session.GetDefaultFolder($olFolders::olFolderCalendar).items | ? { $_.IsRecurring }
 
-# loop through contacts
-& {
-    foreach ($contact in $contacts) {
-        # find calendar entries that match 
-        if ($foundCalEntry = $cal | ? { $_.subject -eq "$($contact.subject)'s Birthday"} ) {
-            $foundCalEntry | select subject, start
+    # loop through contacts
+    & {
+        foreach ($contact in $contacts) {
+            # find calendar entries that match 
+            if ($foundCalEntry = $cal | ? { $_.subject -eq "$($contact.subject)'s Birthday"} ) {
+                $foundCalEntry | select subject, start
 
-            # delete calendar entry
-            $foundCalEntry.Delete()
+                # delete calendar entry
+                $foundCalEntry.Delete()
+            }
         }
-    }
-} | ft -auto
+    } | ft -auto
 
-Send-AndReceive
+    Send-AndReceive
+}
