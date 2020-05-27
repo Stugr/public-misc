@@ -2,7 +2,9 @@
 
 ### OutlookBirthdayCalendar.ps1
 
-I found Outlook.com's automatic birthday calendar creation incredibly unreliable, particularly when changing birthdays on a contact in iOS (Outlook account is added to iOS to allow contact syncing both directions, and Save Contacts is turned off in the Outlook iOS app)
+Outlook.com has an automatic birthday calendar and I have found the creation of entries to be incredibly unreliable, particularly when changing birthdays on a contact in iOS (Outlook account is added to iOS to allow contact syncing both directions, and Save Contacts is turned off in the Outlook iOS app)
+
+Read about the birthday calendar: https://support.office.com/en-us/article/add-a-birthday-calendar-in-outlook-com-b8e636da-fda8-413f-940e-68396efa49a6
 
 Script:
 
