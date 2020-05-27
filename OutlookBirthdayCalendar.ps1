@@ -2,7 +2,7 @@
 $deleteRecurringCalendarEntry = $false
 
 # default no birthday date of 4501
-$noBirthdayDate = '1/01/4501 12:00:00 AM'
+$noBirthdayDate = Get-Date('1/01/4501 12:00:00 AM')
 
 [Reflection.Assembly]::LoadWithPartialname("Microsoft.Office.Interop.Outlook") | out-null
 $olFolders = "Microsoft.Office.Interop.Outlook.OlDefaultFolders" -as [type] 
