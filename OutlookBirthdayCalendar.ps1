@@ -1,6 +1,9 @@
 ﻿$forceEditBirthday = $false
 $deleteRecurringCalendarEntry = $false
 
+# default no birthday date of 4501
+$noBirthdayDate = '1/01/4501 12:00:00 AM'
+
 [Reflection.Assembly]::LoadWithPartialname("Microsoft.Office.Interop.Outlook") | out-null
 $olFolders = "Microsoft.Office.Interop.Outlook.OlDefaultFolders" -as [type] 
 $outlook = New-Object -ComObject Outlook.Application
@@ -16,7 +19,7 @@ function Send-AndReceive {
 Send-AndReceive
 
 # get all contacts which have a birthday set which isn't the default no birthday date of 4501
-$contacts = $outlook.session.GetDefaultFolder($olFolders::olFolderContacts).items | ? { $_.birthday -ne '1/01/4501 12:00:00 AM'} | sort Fullname
+$contacts = $outlook.session.GetDefaultFolder($olFolders::olFolderContacts).items | ? { $_.birthday -ne $noBirthdayDate -and $_.birthday } | sort Fullname
 
 # loop through contacts
 & {
@@ -24,7 +27,7 @@ $contacts = $outlook.session.GetDefaultFolder($olFolders::olFolderContacts).item
         $contact | select Subject, Birthday
 
         # edit birthday to force re-creation of birthday calendar entry
-        if ($forceEditBirthday -and $contact.Birthday) {
+        if ($forceEditBirthday) {
             # add a day to their birthday
             $contact.Birthday = ($contact.Birthday).AddHours(24)
             $contact.save()
