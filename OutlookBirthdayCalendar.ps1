@@ -85,6 +85,10 @@ Write-Verbose "Clearing birthdays"
 
 Send-AndReceive
 
+if ($deleteRecurringCalendarEntry) {
+    Write-Verbose "Clearing recurring calendar entries"
+}
+
 # get recurring calendar entries
 $cal = $outlook.session.GetDefaultFolder($olFolders::olFolderCalendar).items | ? { $_.IsRecurring }
 
