@@ -50,36 +50,38 @@ Write-Verbose "Clearing birthdays"
 0..1 | % {
     $runCount = $_
 
-    # if second run, then send and receive and then sleep to allow outlook.com's backend to catch up
-    if ($runCount -eq 1) {
-        Send-AndReceive
-        Write-Verbose "Waiting for $waitTime seconds"
-        if (-not $whatIf) {
-            sleep $waitTime
-        }
-        Write-Verbose "Setting birthdays back to original values"
-    }
-
-    # loop through contacts
-    foreach ($contact in $contacts) {
-        # first run - clear birthday
-        if ($runCount -eq 0) {
-            $setBirthday = $noBirthdayDate
-        }
-        # second run - set back to original birthday
-        else {
-            $setBirthday = ($contactsOriginal | ? { $_.subject -eq $contact.subject }).birthday
+    & {
+        # if second run, then send and receive and then sleep to allow outlook.com's backend to catch up
+        if ($runCount -eq 1) {
+            Send-AndReceive
+            Write-Verbose "Waiting for $waitTime seconds"
+            if (-not $whatIf) {
+                sleep $waitTime
+            }
+            Write-Verbose "Setting birthdays back to original values"
         }
 
-        # output what we are doing
-        $contact | select Subject, Birthday, @{N='SetBirthdayTo';E={$setBirthday}}
+        # loop through contacts
+        foreach ($contact in $contacts) {
+            # first run - clear birthday
+            if ($runCount -eq 0) {
+                $setBirthday = $noBirthdayDate
+            }
+            # second run - set back to original birthday
+            else {
+                $setBirthday = ($contactsOriginal | ? { $_.subject -eq $contact.subject }).birthday
+            }
+
+            # output what we are doing
+            $contact | select Subject, Birthday, @{N='SetBirthdayTo';E={$setBirthday}}
         
-        # change birthday and save
-        if (-not $whatIf) {
-            $contact.Birthday = $setBirthday
-            $contact.save()
+            # change birthday and save
+            if (-not $whatIf) {
+                $contact.Birthday = $setBirthday
+                $contact.save()
+            }
         }
-    }
+    } | ft -auto
 }
 
 Send-AndReceive
