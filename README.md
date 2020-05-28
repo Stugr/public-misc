@@ -6,7 +6,9 @@ Outlook.com has an automatic birthday calendar and I have found the creation of 
 
 Read about the birthday calendar: https://support.office.com/en-us/article/add-a-birthday-calendar-in-outlook-com-b8e636da-fda8-413f-940e-68396efa49a6
 
-Script:
+Script requires Outlook to be installed and the account you want to use to be setup. Untested with multiple accounts.
+
+After running in default whatIf mode to ensure it's operating against the correct account and you're comfortable with what it will do, toggle `$whatIf = $true` to run it for real
 
 1. Gets all contacts from desktop Outlook app (so you will need to setup your account there)
 2. Set their birthdays to the vCard "no birthday" date of `1/01/4501 12:00:00 AM`
