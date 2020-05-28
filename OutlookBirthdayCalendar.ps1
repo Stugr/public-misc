@@ -42,7 +42,7 @@ Send-AndReceive -force
 
 # get all contacts which have a birthday set which isn't the default no birthday date of 4501
 $contacts = $outlook.session.GetDefaultFolder($olFolders::olFolderContacts).items | ? { $_.birthday -ne $noBirthdayDate -and $_.birthday } | sort Fullname
-$contactsOriginal = ($contacts | select subject, birthday)
+$contactsOriginal = ($contacts | select subject, birthday, @{N='SetBirthdayFrom';E={$_.birthday}}, @{N='SetBirthdayTo';E={$noBirthdayDate}})
 
 Write-Verbose "Clearing birthdays"
 
@@ -63,21 +63,20 @@ Write-Verbose "Clearing birthdays"
 
         # loop through contacts
         foreach ($contact in $contacts) {
-            # first run - clear birthday
-            if ($runCount -eq 0) {
-                $setBirthday = $noBirthdayDate
-            }
+            $contactOriginal = $contactsOriginal | ? { $_.subject -eq $contact.subject }
+
             # second run - set back to original birthday
-            else {
-                $setBirthday = ($contactsOriginal | ? { $_.subject -eq $contact.subject }).birthday
+            if ($runCount -eq 1) {
+                $contactOriginal.SetBirthdayFrom = $contactOriginal.SetBirthdayTo
+                $contactOriginal.SetBirthdayTo = $contactOriginal.Birthday
             }
 
             # output what we are doing
-            $contact | select Subject, Birthday, @{N='SetBirthdayTo';E={$setBirthday}}
+            $contactOriginal | select Subject, SetBirthdayFrom, SetBirthdayTo
         
             # change birthday and save
             if (-not $whatIf) {
-                $contact.Birthday = $setBirthday
+                $contact.Birthday = $contactOriginal.SetBirthdayTo
                 $contact.save()
             }
         }
