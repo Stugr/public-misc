@@ -50,17 +50,17 @@ Write-Verbose "Clearing birthdays"
 0..1 | % {
     $runCount = $_
 
-    & {
-        # if second run, then send and receive and then sleep to allow outlook.com's backend to catch up
-        if ($runCount -eq 1) {
-            Send-AndReceive
-            Write-Verbose "Waiting for $waitTime seconds"
-            if (-not $whatIf) {
-                sleep $waitTime
-            }
-            Write-Verbose "Setting birthdays back to original values"
+    # if second run, then send and receive and then sleep to allow outlook.com's backend to catch up
+    if ($runCount -eq 1) {
+        Send-AndReceive
+        Write-Verbose "Waiting for $waitTime seconds"
+        if (-not $whatIf) {
+            sleep $waitTime
         }
+        Write-Verbose "Setting birthdays back to original values"
+    }
 
+    & {
         # loop through contacts
         foreach ($contact in $contacts) {
             $contactOriginal = $contactsOriginal | ? { $_.subject -eq $contact.subject }
